@@ -63,5 +63,10 @@ module ClearcaseHelper
     def heaven
       $stderr.puts 'NO HEAVEN HERE - use a proper VCS!'
     end
+
+    desc "version", "Show the version"
+    def version
+      puts VERSION
+    end
   end
 end
