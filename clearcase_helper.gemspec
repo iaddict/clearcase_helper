@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "version.rb"
+require "clearcase_helper/version"
 
 Gem::Specification.new do |s|
   s.name        = "clearcase_helper"
