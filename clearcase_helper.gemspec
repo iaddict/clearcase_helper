@@ -3,22 +3,20 @@ $:.push File.expand_path("../lib", __FILE__)
 require "./version"
 
 Gem::Specification.new do |s|
-  s.name        = "."
-  s.version     = .::VERSION
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
+  s.name        = "clearcase_helper"
+  s.version     = ClearcaseHelper::VERSION
+  s.authors     = ["Thomas Steinhausen"]
+  s.email       = ["ts@image-addicts.de"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{A tool to help on some aspects of clearcase annoyances.}
+  s.description = %q{A tool to help on some aspects of clearcase annoyances.}
 
-  s.rubyforge_project = "."
-
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.files         = `hg manifest`.split("\n").collect {|f| f.gsub(/^[0-9]+\s+/, '')}
+  s.test_files    = ''
+  s.executables   = s.files.select {|f| f.match /bin\// }.map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  s.add_runtime_dependency "thor"
 end
