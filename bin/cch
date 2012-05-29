@@ -42,11 +42,12 @@ class ClearcaseHelperCommand < Thor
   map 'cohi' => :checkout_highjacked
 
   desc "checkin [PATH]", "Checks in all checked out files."
+  method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
   def checkin_checkedout(path='./')
     view = ClearcaseHelper::View.new(path)
-    puts view.checkin_checkedout!
+    puts view.checkin_checkedout!(options)
   end
-  map 'ci' => :checkin_checkedout
+  map ['ci', 'checkin'] => :checkin_checkedout
 
   desc "checkin_hijacked [PATH]", "Checks hijacked files out and in again."
   def checkin_hijacked(path='./')
@@ -61,6 +62,11 @@ class ClearcaseHelperCommand < Thor
     puts view.add_view_only_files!
   end
   map ['avo', 'add'] => :add_view_only_files
+
+  desc "heaven", "Show real help."
+  def heaven
+    $stderr.puts 'NO HEAVEN HERE - use a proper VCS!'
+  end
 end
 
 ClearcaseHelperCommand.start
