@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    clearcase_helper (0.0.3)
+    clearcase_helper (0.0.5)
       thor
 
 GEM
