@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    clearcase_helper (0.0.3)
+      thor
+
 GEM
   specs:
     thor (0.14.6)
@@ -6,4 +12,4 @@ PLATFORMS
   java
 
 DEPENDENCIES
-  thor
+  clearcase_helper!

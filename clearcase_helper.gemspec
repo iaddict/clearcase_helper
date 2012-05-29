@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "./version"
+require "version.rb"
 
 Gem::Specification.new do |s|
   s.name        = "clearcase_helper"
@@ -9,7 +9,18 @@ Gem::Specification.new do |s|
   s.email       = ["ts@image-addicts.de"]
   s.homepage    = ""
   s.summary     = %q{A tool to help on some aspects of clearcase annoyances.}
-  s.description = %q{A tool to help on some aspects of clearcase annoyances.}
+  s.description = <<-D
+    Clearcase has no simple to use command line tool
+
+      - to find and add view only files in a recursive manner
+      - to checkout and checkin hijacked files.
+
+    This tool is a simple wrapper to cleartool which allows just that.
+
+    Usage:
+
+      $ cch help
+  D
 
   s.files         = `hg manifest`.split("\n").collect {|f| f.gsub(/^[0-9]+\s+/, '')}
   s.test_files    = ''
