@@ -1,6 +1,7 @@
 module ClearcaseHelper
   class View
     attr_reader :view_path
+    attr_reader :identity_map
 
     def initialize(view_path)
       @view_path = view_path
@@ -12,9 +13,12 @@ module ClearcaseHelper
       end
 
       raw_files = `cleartool ls -recurse #{@view_path}`.split(/\n/)
-      raw_files.reject! {|f| f.match(/\.hg/)}
+      raw_files.reject! {|f| f.match(/\.hg|\.git|\.svn/)} # filter artefacts of other vcs
 
-      @files = raw_files.map {|f| CCFile.new(f)}
+      @files = raw_files.map {|f| CCFile.new(f, self)}
+      @identity_map = @files.inject({}) {|memo, file| memo[file.to_s] = file; memo}
+
+      @files
     end
 
     def view_only_files(refresh=false)
@@ -35,29 +39,44 @@ module ClearcaseHelper
       end
     end
 
-    # @param Hash[Symbol => String] - :comment => 'some comment'
+    def file_for(file, options={})
+      file = file.to_s.strip
+
+      cc_file = @identity_map[file]
+
+      if cc_file.nil? && !file.empty?
+        cc_file = @identity_map[file] = CCFile.new(file, self).refresh_status(options)
+      end
+
+      cc_file
+    end
+
+    # @param Hash[Symbol => String] - :comment => 'some comment', :debug => boolean, :noop => :boolean
     def checkin_checkedout!(options={})
       checkedout_files.each do |file|
         file.checkin!(options)
       end
     end
 
-    def checkout_highjacked!
+    # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
+    def checkout_highjacked!(options={})
       hijacked_files.each do |file|
-        file.checkout!
+        file.checkout!(options)
       end
     end
 
-    def checkin_hijacked!
+    # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
+    def checkin_hijacked!(options={})
       hijacked_files.each do |file|
-        file.checkout!
-        file.checkin!
+        file.checkout!(options={})
+        file.checkin!(options)
       end
     end
 
-    def add_view_only_files!
+    # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
+    def add_view_only_files!(options={})
       view_only_files.sort.each do |file|
-        file.add!
+        file.add!(options)
       end
     end
   end

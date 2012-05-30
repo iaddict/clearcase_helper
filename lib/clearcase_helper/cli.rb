@@ -31,14 +31,16 @@ module ClearcaseHelper
     map 'cof' => :checkedout_files
 
     desc "checkout_highjacked [PATH]", "Checks out all highjacked files."
+    method_options :verbose => false, :noop => false
     def checkout_highjacked(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.checkout_highjacked!
+      puts view.checkout_highjacked!(options)
     end
     map 'cohi' => :checkout_highjacked
 
     desc "checkin [PATH]", "Checks in all checked out files."
     method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
+    method_options :verbose => false, :noop => false
     def checkin_checkedout(path='./')
       view = ClearcaseHelper::View.new(path)
       puts view.checkin_checkedout!(options)
@@ -46,16 +48,18 @@ module ClearcaseHelper
     map ['ci', 'checkin'] => :checkin_checkedout
 
     desc "checkin_hijacked [PATH]", "Checks hijacked files out and in again."
+    method_options :verbose => false, :noop => false
     def checkin_hijacked(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.checkin_hijacked!
+      puts view.checkin_hijacked!(options)
     end
     map 'cihi' => :checkin_hijacked
 
     desc "add_view_only_files [PATH]", "Adds and checks in files that are not yet versioned."
+    method_options :verbose => false, :noop => false
     def add_view_only_files(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.add_view_only_files!
+      puts view.add_view_only_files!(options)
     end
     map ['avo', 'add'] => :add_view_only_files
 

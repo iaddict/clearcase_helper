@@ -1,9 +1,11 @@
 module ClearcaseHelper
   class CCFile
     attr_accessor :file
+    attr_accessor :view
 
-    def initialize(file)
-      @file = file
+    def initialize(file_name, view)
+      @file = file_name
+      @view = view
     end
 
     def is_hijacked?
@@ -37,23 +39,48 @@ module ClearcaseHelper
       File.dirname(file)
     end
 
-    def add!
-      `cleartool co -c "" -ptime -nwarn #{parent_dirname}`
-      `cleartool mkelem -c "" -ptime #{file}`
-      $? == 0
+    # Refreshes state and returns self.
+    #
+    # @return [CCFile]
+    def refresh_status(options={})
+      success, stdout = cleartool("ls #{directory? ? '-directory' : ''} #{self.to_s}", options)
+      @file = stdout.strip
+
+      self
+    end
+
+    def add!(options={})
+      parent = view.file_for(parent_dirname, options)
+      if parent.is_view_only?
+        parent.add!(options)
+        parent.refresh_status(options)
+      end
+
+      #cleartool("co -c \"\" -ptime -nwarn #{parent_dirname}", options)
+      parent.checkout! unless parent.is_checkedout?
+      success, stdout = cleartool("mkelem -c \"\" -ptime #{file}", options)
+
+      refresh_status(options)
+
+      success
     end
 
     # @param Hash[Symbol => String] - :comment => 'some comment'
     def checkin!(options={})
       comment = options[:comment] || ''
-      puts cmd = "cleartool ci -c \"#{comment}\" -identical -ptime #{self.to_s}"
-      `#{cmd}`
-      $? == 0
+      success, stdout = cleartool("ci -c \"#{comment}\" -identical -ptime #{self.to_s}", options)
+
+      refresh_status(options)
+
+      success
     end
 
-    def checkout!
-      `cleartool co -c "" -ptime -nwarn -usehijack #{self.to_s}`
-      $? == 0
+    def checkout!(options={})
+      success, stdout = cleartool("co -c \"\" -ptime -nwarn -usehijack #{self.to_s}", options)
+
+      refresh_status(options)
+
+      success
     end
 
     def to_s
@@ -62,6 +89,16 @@ module ClearcaseHelper
 
     def <=>(other)
       self.to_s <=> other.to_s
+    end
+
+    def cleartool(command, options={})
+      cmd = "cleartool #{command}"
+      stdout  = `#{cmd}` unless options[:noop]
+      success = $? == 0
+
+      puts "# #{cmd} (#{$?}, #{success})=>\n#{stdout.split("\n").collect {|l| "  #{l}"}.join("\n")}" if options[:verbose]
+
+      return success, stdout
     end
   end
 end
