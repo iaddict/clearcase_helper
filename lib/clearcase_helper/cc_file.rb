@@ -91,7 +91,7 @@ module ClearcaseHelper
     end
 
     def checkout!(options={})
-      success, stdout = cleartool("co -c \"\" -ptime -nwarn -usehijack #{self.to_s}", options)
+      success, stdout = cleartool("co -c \"\" -ptime -nwarn #{is_hijacked? ? '-usehijack' : ''} #{self.to_s}", options)
 
       refresh_status(options)
 
