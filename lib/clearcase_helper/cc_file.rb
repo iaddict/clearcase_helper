@@ -24,6 +24,10 @@ module ClearcaseHelper
       file.match /\[loaded but missing\]/
     end
 
+    def is_checkedin?
+      short_status.strip.empty?
+    end
+
     def short_status
       return 'HI' if is_hijacked?
       return 'CO' if is_checkedout?

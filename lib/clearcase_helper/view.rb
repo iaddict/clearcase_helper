@@ -37,8 +37,10 @@ module ClearcaseHelper
       files(refresh).select {|f| f.is_missing?}
     end
 
-    def all_files_with_status(refresh=false)
-      files(refresh).collect do |file|
+    def all_files_with_status(refresh=false, options={})
+      show_short = !options[:long]
+
+      files(refresh).reject {|file| show_short and file.is_checkedin?}.collect do |file|
         "#{file.short_status} #{file}"
       end
     end

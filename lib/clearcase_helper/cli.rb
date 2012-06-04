@@ -3,9 +3,10 @@ require 'thor'
 module ClearcaseHelper
   class CLI < Thor
     desc "all_files [PATH]", "Shows all files in this view prefixed with its short status (CO: checkedout, HI: hijacked, ~: loaded but missing, ?: only in view)."
+    method_option :long, :default => false, :aliases => ['-l'], :desc => 'Show all files, including those that have no special state.'
     def all_files(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.all_files_with_status
+      puts view.all_files_with_status(false, options)
     end
     map ['status', 'st'] => :all_files
 
