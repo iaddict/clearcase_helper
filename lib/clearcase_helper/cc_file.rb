@@ -20,23 +20,28 @@ module ClearcaseHelper
       file.match /@@[^\s]+CHECKEDOUT/
     end
 
+    def is_missing?
+      file.match /\[loaded but missing\]/
+    end
+
     def short_status
       return 'HI' if is_hijacked?
       return 'CO' if is_checkedout?
+      return '~ ' if is_missing?
       return '? ' if is_view_only?
       return '  '
     end
 
     def file?
-      File.file?(file)
+      File.file?(self.to_s)
     end
 
     def directory?
-      File.directory?(file)
+      File.directory?(self.to_s)
     end
 
     def parent_dirname
-      File.dirname(file)
+      File.dirname(self.to_s)
     end
 
     # Refreshes state and returns self.
@@ -56,9 +61,19 @@ module ClearcaseHelper
         parent.refresh_status(options)
       end
 
-      #cleartool("co -c \"\" -ptime -nwarn #{parent_dirname}", options)
       parent.checkout! unless parent.is_checkedout?
-      success, stdout = cleartool("mkelem -c \"\" -ptime #{file}", options)
+      success, stdout = cleartool("mkelem -c \"\" -ptime #{file.to_s}", options)
+
+      refresh_status(options)
+
+      success
+    end
+
+    def remove!(options={})
+      parent = view.file_for(parent_dirname, options)
+
+      parent.checkout! unless parent.is_checkedout?
+      success, stdout = cleartool("rmname -c \"\" #{file.to_s}", options)
 
       refresh_status(options)
 

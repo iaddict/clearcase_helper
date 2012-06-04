@@ -2,7 +2,7 @@ require 'thor'
 
 module ClearcaseHelper
   class CLI < Thor
-    desc "all_files [PATH]", "Shows all files in this view prefixed with its short status (CO: checkedout, HI: hijacked, ?: only in view)."
+    desc "all_files [PATH]", "Shows all files in this view prefixed with its short status (CO: checkedout, HI: hijacked, ~: loaded but missing, ?: only in view)."
     def all_files(path='./')
       view = ClearcaseHelper::View.new(path)
       puts view.all_files_with_status
@@ -29,6 +29,13 @@ module ClearcaseHelper
       puts view.checkedout_files
     end
     map 'cof' => :checkedout_files
+
+    desc "missing_files [PATH]", "Shows all files that are loaded but missing in view."
+    def missing_files(path='./')
+      view = ClearcaseHelper::View.new(path)
+      puts view.missing_files
+    end
+    map 'mf' => :missing_files
 
     desc "checkout_highjacked [PATH]", "Checks out all highjacked files."
     method_options :verbose => false, :noop => false
@@ -62,6 +69,13 @@ module ClearcaseHelper
       puts view.add_view_only_files!(options)
     end
     map ['avo', 'add'] => :add_view_only_files
+
+    desc "remove_missing_files [PATH]", "Removes files (rmname) that are loaded but deleted from view."
+    method_options :verbose => false, :noop => false
+    def remove_missing_files(path='./')
+      view = ClearcaseHelper::View.new(path)
+      puts view.remove_missing_files!(options)
+    end
 
     desc "heaven", "Show real help."
     def heaven

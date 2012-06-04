@@ -33,6 +33,10 @@ module ClearcaseHelper
       files(refresh).select {|f| f.is_checkedout?}
     end
 
+    def missing_files(refresh=false)
+      files(refresh).select {|f| f.is_missing?}
+    end
+
     def all_files_with_status(refresh=false)
       files(refresh).collect do |file|
         "#{file.short_status} #{file}"
@@ -77,6 +81,12 @@ module ClearcaseHelper
     def add_view_only_files!(options={})
       view_only_files.sort.each do |file|
         file.add!(options)
+      end
+    end
+
+    def remove_missing_files!(options={})
+      missing_files.sort.each do |file|
+        file.remove!(options)
       end
     end
   end
