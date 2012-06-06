@@ -2,13 +2,13 @@ require 'thor'
 
 module ClearcaseHelper
   class CLI < Thor
-    desc "all_files [PATH]", "Shows all files in this view prefixed with its short status (CO: checkedout, HI: hijacked, ~: loaded but missing, ?: only in view)."
+    desc "status [PATH]", "Shows files in this view prefixed with its short status (CO: checkedout, HI: hijacked, ~: loaded but missing, ?: only in view)."
     method_option :long, :default => false, :aliases => ['-l'], :desc => 'Show all files, including those that have no special state.'
     def all_files(path='./')
       view = ClearcaseHelper::View.new(path)
       puts view.all_files_with_status(false, options)
     end
-    map ['status', 'st'] => :all_files
+    map ['st'] => :all_files
 
     desc "view_only_files [PATH]", "Shows all files that are not added to this view (unversioned files)."
     def view_only_files(path='./')
@@ -63,7 +63,7 @@ module ClearcaseHelper
     end
     map 'cihi' => :checkin_hijacked
 
-    desc "add_view_only_files [PATH]", "Adds and checks in files that are not yet versioned."
+    desc "add_view_only_files [PATH]", "Recursively adds and checks in files that are not yet versioned."
     method_options :verbose => false, :noop => false
     def add_view_only_files(path='./')
       view = ClearcaseHelper::View.new(path)
