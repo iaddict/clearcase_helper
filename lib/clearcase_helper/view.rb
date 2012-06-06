@@ -1,5 +1,7 @@
 module ClearcaseHelper
   class View
+    include Executables
+
     attr_reader :view_path
     attr_reader :identity_map
 
@@ -7,12 +9,13 @@ module ClearcaseHelper
       @view_path = view_path
     end
 
-    def files(refresh=false)
+    def files(refresh=false, options={})
       if @files and !refresh
         return @files
       end
 
-      raw_files = `cleartool ls -recurse #{@view_path}`.split(/\n/)
+      success, stdout = cleartool("ls -recurse #{@view_path.shellescape}", options)
+      raw_files = stdout.split(/\n/)
       raw_files.reject! {|f| f.match(/\.hg|\.git|\.svn/)} # filter artefacts of other vcs
 
       @files = raw_files.map {|f| CCFile.new(f, self)}
@@ -21,30 +24,32 @@ module ClearcaseHelper
       @files
     end
 
-    def view_only_files(refresh=false)
-      files(refresh).select {|f| f.is_view_only?}
+    def view_only_files(refresh=false, options={})
+      files(refresh, options).select {|f| f.is_view_only?}
     end
 
-    def hijacked_files(refresh=false)
-      files(refresh).select {|f| f.is_hijacked?}
+    def hijacked_files(refresh=false, options={})
+      files(refresh, options).select {|f| f.is_hijacked?}
     end
 
-    def checkedout_files(refresh=false)
-      files(refresh).select {|f| f.is_checkedout?}
+    def checkedout_files(refresh=false, options={})
+      files(refresh, options).select {|f| f.is_checkedout?}
     end
 
-    def missing_files(refresh=false)
-      files(refresh).select {|f| f.is_missing?}
+    def missing_files(refresh=false, options={})
+      files(refresh, options).select {|f| f.is_missing?}
     end
 
     def all_files_with_status(refresh=false, options={})
       show_short = !options[:long]
 
-      files(refresh).reject {|file| show_short and file.is_checkedin?}.collect do |file|
+      files(refresh, options).reject {|file| show_short and file.is_checkedin?}.collect do |file|
         "#{file.short_status} #{file}"
       end
     end
 
+    # @param [String, CCFile] file to get from the identity map. If the file is missing a new instance is added to the map and returned.
+    # @return [CCFile]
     def file_for(file, options={})
       file = file.to_s.strip
 
@@ -59,35 +64,36 @@ module ClearcaseHelper
 
     # @param Hash[Symbol => String] - :comment => 'some comment', :debug => boolean, :noop => :boolean
     def checkin_checkedout!(options={})
-      checkedout_files.each do |file|
+      checkedout_files(false, options.merge(:nostdout => true, :noop => false)).each do |file|
         file.checkin!(options)
       end
     end
 
     # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
     def checkout_highjacked!(options={})
-      hijacked_files.each do |file|
+      hijacked_files(false, options.merge(:nostdout => true, :noop => false)).each do |file|
         file.checkout!(options)
       end
     end
 
     # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
     def checkin_hijacked!(options={})
-      hijacked_files.each do |file|
-        file.checkout!(options={})
+      hijacked_files(false, options.merge(:nostdout => true, :noop => false)).each do |file|
+        file.checkout!(options)
         file.checkin!(options)
       end
     end
 
     # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
     def add_view_only_files!(options={})
-      view_only_files.sort.each do |file|
+      view_only_files(false, options.merge(:nostdout => true, :noop => false)).sort.each do |file|
         file.add!(options)
       end
     end
 
+    # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
     def remove_missing_files!(options={})
-      missing_files.sort.each do |file|
+      missing_files(false, options.merge(:nostdout => true, :noop => false)).sort.each do |file|
         file.remove!(options)
       end
     end

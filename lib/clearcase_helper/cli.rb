@@ -2,6 +2,10 @@ require 'thor'
 
 module ClearcaseHelper
   class CLI < Thor
+    class_option :verbose, :default => false, :type => :boolean, :desc => "Show executed cleartool commands and its results on stdout."
+    class_option :noop,    :default => false, :type => :boolean, :desc => "Do nothing to the clearcase view. cleartool is not executed."
+    class_option :nostdout,:default => false, :type => :boolean, :desc => "Do not show the cleartool output when verbose is on."
+
     desc "status [PATH]", "Shows files in this view prefixed with its short status (CO: checkedout, HI: hijacked, ~: loaded but missing, ?: only in view)."
     method_option :long, :default => false, :aliases => ['-l'], :desc => 'Show all files, including those that have no special state.'
     def all_files(path='./')
@@ -13,42 +17,40 @@ module ClearcaseHelper
     desc "view_only_files [PATH]", "Shows all files that are not added to this view (unversioned files)."
     def view_only_files(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.view_only_files
+      puts view.view_only_files(false, options)
     end
     map 'vof' => :view_only_files
 
     desc "hijacked_files [PATH]", "Shows all files that are hijacked."
     def hijacked_files(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.hijacked_files
+      puts view.hijacked_files(false, options)
     end
     map 'hif' => :hijacked_files
 
     desc "checkedout_files [PATH]", "Shows all files that are checked out."
     def checkedout_files(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.checkedout_files
+      puts view.checkedout_files(false, options)
     end
     map 'cof' => :checkedout_files
 
     desc "missing_files [PATH]", "Shows all files that are loaded but missing in view."
     def missing_files(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.missing_files
+      puts view.missing_files(false, options)
     end
     map 'mf' => :missing_files
 
     desc "checkout_highjacked [PATH]", "Checks out all highjacked files."
-    method_options :verbose => false, :noop => false
     def checkout_highjacked(path='./')
       view = ClearcaseHelper::View.new(path)
-      puts view.checkout_highjacked!(options)
+      puts view.checkout_highjacked!(false, options)
     end
     map 'cohi' => :checkout_highjacked
 
     desc "checkin [PATH]", "Checks in all checked out files."
     method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
-    method_options :verbose => false, :noop => false
     def checkin_checkedout(path='./')
       view = ClearcaseHelper::View.new(path)
       puts view.checkin_checkedout!(options)
@@ -56,7 +58,6 @@ module ClearcaseHelper
     map ['ci', 'checkin'] => :checkin_checkedout
 
     desc "checkin_hijacked [PATH]", "Checks hijacked files out and in again."
-    method_options :verbose => false, :noop => false
     def checkin_hijacked(path='./')
       view = ClearcaseHelper::View.new(path)
       puts view.checkin_hijacked!(options)
@@ -64,7 +65,6 @@ module ClearcaseHelper
     map 'cihi' => :checkin_hijacked
 
     desc "add_view_only_files [PATH]", "Recursively adds and checks in files that are not yet versioned."
-    method_options :verbose => false, :noop => false
     def add_view_only_files(path='./')
       view = ClearcaseHelper::View.new(path)
       puts view.add_view_only_files!(options)
@@ -72,7 +72,6 @@ module ClearcaseHelper
     map ['avo', 'add'] => :add_view_only_files
 
     desc "remove_missing_files [PATH]", "Removes files (rmname) that are loaded but deleted from view."
-    method_options :verbose => false, :noop => false
     def remove_missing_files(path='./')
       view = ClearcaseHelper::View.new(path)
       puts view.remove_missing_files!(options)

@@ -1,5 +1,7 @@
 module ClearcaseHelper
   class CCFile
+    include Executables
+
     attr_accessor :file
     attr_accessor :view
 
@@ -52,7 +54,7 @@ module ClearcaseHelper
     #
     # @return [CCFile]
     def refresh_status(options={})
-      success, stdout = cleartool("ls #{directory? ? '-directory' : ''} #{self.to_s}", options)
+      success, stdout = cleartool("ls #{directory? ? '-directory' : ''} #{self.to_s.shellescape}", options)
       @file = stdout.strip
 
       self
@@ -65,8 +67,8 @@ module ClearcaseHelper
         parent.refresh_status(options)
       end
 
-      parent.checkout! unless parent.is_checkedout?
-      success, stdout = cleartool("mkelem -c \"\" -ptime #{file.to_s}", options)
+      parent.checkout!(options) unless parent.is_checkedout?
+      success, stdout = cleartool("mkelem -c \"\" -ptime #{file.to_s.shellescape}", options)
 
       refresh_status(options)
 
@@ -76,8 +78,8 @@ module ClearcaseHelper
     def remove!(options={})
       parent = view.file_for(parent_dirname, options)
 
-      parent.checkout! unless parent.is_checkedout?
-      success, stdout = cleartool("rmname -c \"\" #{file.to_s}", options)
+      parent.checkout!(options) unless parent.is_checkedout?
+      success, stdout = cleartool("rmname -c \"\" #{file.to_s.shellescape}", options)
 
       refresh_status(options)
 
@@ -87,7 +89,7 @@ module ClearcaseHelper
     # @param Hash[Symbol => String] - :comment => 'some comment'
     def checkin!(options={})
       comment = options[:comment] || ''
-      success, stdout = cleartool("ci -c \"#{comment}\" -identical -ptime #{self.to_s}", options)
+      success, stdout = cleartool("ci -c \"#{comment.shellescape}\" -identical -ptime #{self.to_s.shellescape}", options)
 
       refresh_status(options)
 
@@ -95,7 +97,7 @@ module ClearcaseHelper
     end
 
     def checkout!(options={})
-      success, stdout = cleartool("co -c \"\" -ptime -nwarn #{is_hijacked? ? '-usehijack' : ''} #{self.to_s}", options)
+      success, stdout = cleartool("co -c \"\" -ptime -nwarn #{is_hijacked? ? '-usehijack' : ''} #{self.to_s.shellescape}", options)
 
       refresh_status(options)
 
@@ -108,16 +110,6 @@ module ClearcaseHelper
 
     def <=>(other)
       self.to_s <=> other.to_s
-    end
-
-    def cleartool(command, options={})
-      cmd = "cleartool #{command}"
-      stdout  = `#{cmd}` unless options[:noop]
-      success = $? == 0
-
-      puts "# #{cmd} (#{$?}, #{success})=>\n#{stdout.split("\n").collect {|l| "  #{l}"}.join("\n")}" if options[:verbose]
-
-      return success, stdout
     end
   end
 end
