@@ -58,6 +58,7 @@ module ClearcaseHelper
     map ['ci', 'checkin'] => :checkin_checkedout
 
     desc "checkin_hijacked [PATH]", "Checks hijacked files out and in again."
+    method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
     def checkin_hijacked(path='.')
       view = ClearcaseHelper::View.new(path)
       puts view.checkin_hijacked!(options)
