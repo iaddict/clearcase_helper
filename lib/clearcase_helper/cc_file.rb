@@ -81,7 +81,15 @@ module ClearcaseHelper
       parent.checkout!(options) unless parent.is_checkedout?
       success, stdout = cleartool("rmname -c \"\" #{file.to_s.shellescape}", options)
 
-      refresh_status(options)
+      
+      if success
+        # no need to refresh file because this file does not exist anymore,
+        # so just remove it from the identity map
+        view.forget_file(self)
+      else
+        # do refresh status since deletion failed
+        refresh_status(options)
+      end
 
       success
     end

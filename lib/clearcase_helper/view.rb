@@ -62,6 +62,15 @@ module ClearcaseHelper
       cc_file
     end
 
+    # Removes given file from this views identity map.
+    # Used by the remove! file action to cleanup view state on success.
+    #
+    # @param [String, CCFile] file to forget in the identity map.
+    # @return [CCFile] the file that has been removed from the identity map.
+    def forget_file(file)
+      @identity_map.delete(file)
+    end
+
     # @param Hash[Symbol => String] - :comment => 'some comment', :debug => boolean, :noop => :boolean
     def checkin_checkedout!(options={})
       checkedout_files(false, options.merge(:nostdout => true, :noop => false)).each do |file|
@@ -93,7 +102,7 @@ module ClearcaseHelper
 
     # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
     def remove_missing_files!(options={})
-      missing_files(false, options.merge(:nostdout => true, :noop => false)).sort.each do |file|
+      missing_files(false, options.merge(:nostdout => true, :noop => false)).sort.reverse.each do |file|
         file.remove!(options)
       end
     end
