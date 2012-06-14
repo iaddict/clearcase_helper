@@ -45,7 +45,7 @@ module ClearcaseHelper
     desc "checkout_highjacked [PATH]", "Checks out all highjacked files."
     def checkout_highjacked(path='.')
       view = ClearcaseHelper::View.new(path)
-      puts view.checkout_highjacked!(false, options)
+      puts view.checkout_highjacked!(options)
     end
     map 'cohi' => :checkout_highjacked
 
