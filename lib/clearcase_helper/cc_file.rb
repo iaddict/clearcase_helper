@@ -79,7 +79,7 @@ module ClearcaseHelper
       parent = view.file_for(parent_dirname, options)
 
       parent.checkout!(options) unless parent.is_checkedout?
-      success, stdout = cleartool("rmname -c \"\" #{file.to_s.shellescape}", options)
+      success, stdout = cleartool("rmname -c \"\" #{self.to_s.shellescape}", options)
 
       
       if success
