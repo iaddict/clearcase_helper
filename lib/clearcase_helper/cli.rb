@@ -78,6 +78,21 @@ module ClearcaseHelper
       puts view.remove_missing_files!(options)
     end
 
+    desc "create_and_add_label label [PATH]", "Creates a label type and adds it recursively to all files in current view path."
+    method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
+    def create_and_add_label(label, path='.')
+      view = ClearcaseHelper::View.new(path)
+      puts view.make_label_type(label)
+      puts view.make_label(label)
+    end
+
+    desc "add_label label [PATH]", "Adds an existing label recursively to all files in current view path."
+    method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
+    def add_label(label, path='.')
+      view = ClearcaseHelper::View.new(path)
+      puts view.make_label(label)
+    end
+
     desc "heaven", "Show real help."
     def heaven
       $stderr.puts 'NO HEAVEN HERE - use a proper VCS!'

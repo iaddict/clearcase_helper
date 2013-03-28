@@ -106,5 +106,19 @@ module ClearcaseHelper
         file.remove!(options)
       end
     end
+
+    # @param String label - the label type name to create
+    # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
+    def make_label_type(label, options={})
+      comment = (options[:comment] || '') + ": #{@view_path}"
+      cleartool("mklbtype -c \"#{comment.shellescape}\" #{label.shellescape}", options)
+    end
+
+    # @param String label - the label name to apply recursively to all files in actual view path
+    # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
+    def make_label(label, options={})
+      comment = options[:comment] || ''
+      cleartool("mklabel -c \"#{comment.shellescape}\" -recurse #{label.shellescape} #{@view_path.shellescape}", options)
+    end
   end
 end
