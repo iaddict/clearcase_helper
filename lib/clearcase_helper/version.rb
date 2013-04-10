@@ -1,3 +1,3 @@
 module ClearcaseHelper
-  VERSION = "0.4.8".freeze
+  VERSION = "0.4.8"
 end

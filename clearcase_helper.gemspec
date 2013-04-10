@@ -22,8 +22,14 @@ Gem::Specification.new do |s|
       $ cch help
   D
 
-  s.files         = `hg manifest`.split("\n").collect {|f| f.gsub(/^[0-9]+\s+/, '')}
-  s.test_files    = ''
+  files = if File.directory?('.git')
+            `git ls-files`.split($/)
+          elsif File.directory?('.hg')
+            `hg manifest`.split("\n").collect {|f| f.gsub(/^[0-9]+\s+/, '')}
+          end
+
+  s.files         = files
+  s.test_files    = []
   s.executables   = s.files.select {|f| f.match /bin\// }.map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
