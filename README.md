@@ -1,17 +1,17 @@
 ClearCase Helper
 ================
 
-ClearCase Helper is a small commanline utility to make some aspects of ClearCase more accessible.
+ClearCase Helper is a small command line utility to make some aspects of ClearCase more accessible.
 
-It originated from the wish to use a ditsributed version control system (hg, git) as the primary VCS and the need to update the clearcase repository in regular intervals.
+It originated from the wish to use a distributed version control system (hg, git) as the primary VCS and the need to update the clearcase repository in regular intervals.
 
 Clearcase Helper wraps cleartool and builds upon its command set some new ones.
-These commands expecially allow you to add, remove, checkout hijacked and checkin files in recursive manner.
-Additionally you can view the status of the view files in a familiar way.
+These commands especially allow you to add, remove, checkout hijacked and checkin files in a recursive manner.
+Additionally you can view the status of the view files in a familiar way and add labels (tag) a bunch of files in one go.
 
 Files and directories that match .hg*, .svn* and .git* are ignored by all operations.
 
-Beware that ClearCase Helper is only an adition to the clearcase toolchain and not a subtitute.
+Beware that ClearCase Helper is only an addition to the clearcase toolchain and not a substitute.
 
 
 Install
@@ -39,4 +39,4 @@ Tested with cleartool version 7.1.1.2 on Windows 7 with ruby 1.9.2p0.
 Licence
 -------
 
-See LICENCE.txt
+See LICENSE
