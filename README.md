@@ -36,6 +36,13 @@ Prerequesites
 Tested with cleartool version 7.1.1.2 on Windows 7 with ruby 1.9.2p0.
 
 
+Build
+-----
+
+    rake build # this creates the gem in pkg/
+    rake install # this task creates and installs the gem
+
+
 Licence
 -------
 
