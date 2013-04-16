@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
             `git ls-files`.split($/)
           elsif File.directory?('.hg')
             `hg manifest`.split("\n").collect {|f| f.gsub(/^[0-9]+\s+/, '')}
+          else
+            Dir.glob(%w(* bin/* lib/**/*))
           end
 
   s.files         = files
