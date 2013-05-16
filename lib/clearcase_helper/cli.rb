@@ -82,15 +82,15 @@ module ClearcaseHelper
     method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
     def create_and_add_label(label, path='.')
       view = ClearcaseHelper::View.new(path)
-      puts view.make_label_type(label)
-      puts view.make_label(label)
+      puts view.make_label_type(label, options)
+      puts view.make_label(label, options)
     end
 
     desc "add_label label [PATH]", "Adds an existing label recursively to all files in current view path."
     method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
     def add_label(label, path='.')
       view = ClearcaseHelper::View.new(path)
-      puts view.make_label(label)
+      puts view.make_label(label, options)
     end
 
     desc "heaven", "Show real help."
