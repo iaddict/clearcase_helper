@@ -15,8 +15,21 @@ module ClearcaseHelper
       end
 
       success, stdout = cleartool("ls -recurse #{@view_path.shellescape}", options)
+
+      # load excludes from .ccignore
+      ccignore_file = File.join(@view_path,'.ccignore')
+      ccignore = if File.exist?(ccignore_file)
+                   File.readlines(ccignore_file).map {|ignore| ignore.strip}
+                 else
+                   %w(\.hg|\.git|\.svn)
+                 end
+
       raw_files = stdout.split(/\n/)
-      raw_files.reject! {|f| f.match(/\.hg|\.git|\.svn/)} # filter artefacts of other vcs
+      raw_files.reject! do |f|
+        ccignore.any? do |ignore|
+          f.match(/#{ignore}/)
+        end
+      end # filter excluded files / folders
 
       @files = raw_files.map {|f| CCFile.new(f, self)}
       @identity_map = @files.inject({}) {|memo, file| memo[file.to_s] = file; memo}
