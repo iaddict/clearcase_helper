@@ -9,7 +9,7 @@ Clearcase Helper wraps cleartool and builds upon its command set some new ones.
 These commands especially allow you to add, remove, checkout hijacked and checkin files in a recursive manner.
 Additionally you can view the status of the view files in a familiar way and add labels (tag) a bunch of files in one go.
 
-Files and directories that match .hg*, .svn* and .git* are ignored by all operations.
+Files and directories that match .hg*, .svn* and .git* are ignored by all operations if there is no .ccignore file.
 
 Beware that ClearCase Helper is only an addition to the clearcase toolchain and not a substitute.
 
@@ -25,6 +25,7 @@ Usage
 
     cch help
 
+.ccignore file expects line(s) with regex patterns (String.match) to ignore Files and Directories by all operations.
 
 Prerequesites
 ------------
