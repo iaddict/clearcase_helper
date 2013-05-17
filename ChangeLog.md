@@ -8,3 +8,4 @@ ClearCase Helper is a small command line utility to make some aspects of ClearCa
 ## v0.4.9
 
 * added .ccignore file support to control which files and directories should not be tracked [thx @TyMi]
+* some gem build cleanups
