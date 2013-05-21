@@ -12,7 +12,7 @@ module ClearcaseHelper
       view = ClearcaseHelper::View.new(path)
       puts view.all_files_with_status(false, options)
     end
-    map ['st'] => :all_files
+    map ['st','status'] => :all_files
 
     desc "view_only_files [PATH]", "Shows all files that are not added to this view (unversioned files)."
     def view_only_files(path='.')
