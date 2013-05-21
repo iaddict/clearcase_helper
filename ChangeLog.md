@@ -5,6 +5,10 @@ ClearCase Helper is a small command line utility to make some aspects of ClearCa
     gem install clearcase_helper
     cch help
 
+## v0.4.10
+
+* Fix: `cch st` should also be available as `cch status` [thx @TyMi]
+
 ## v0.4.9
 
 * added .ccignore file support to control which files and directories should not be tracked [thx @TyMi]
