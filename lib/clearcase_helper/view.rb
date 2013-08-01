@@ -104,6 +104,7 @@ module ClearcaseHelper
       hijacked_files(false, options.merge(:nostdout => true, :noop => false)).each do |file|
         file.checkout!(options)
         file.checkin!(options)
+        file.checkout!(options) if options[:keep]
       end
     end
 

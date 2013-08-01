@@ -60,6 +60,7 @@ module ClearcaseHelper
 
     desc "checkin_hijacked [PATH]", "Checks hijacked files out and in again."
     method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
+    method_option :keep, :default => false, :type => :boolean, :desc => 'keep files checked out (editable / check them out again)'
     def checkin_hijacked(path='.')
       view = ClearcaseHelper::View.new(path)
       puts view.checkin_hijacked!(options)
