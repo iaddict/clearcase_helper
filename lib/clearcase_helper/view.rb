@@ -88,6 +88,7 @@ module ClearcaseHelper
     def checkin_checkedout!(options={})
       checkedout_files(false, options.merge(:nostdout => true, :noop => false)).each do |file|
         file.checkin!(options)
+        file.checkout!(options) if options[:keep]
       end
     end
 

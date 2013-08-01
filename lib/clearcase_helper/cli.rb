@@ -51,6 +51,7 @@ module ClearcaseHelper
 
     desc "checkin [PATH]", "Checks in all checked out files."
     method_option :comment, :default => '', :aliases => ['-c', '-m'], :desc => 'use <comment> as commit message'
+    method_option :keep, :default => false, :type => :boolean, :desc => 'keep files checked out (editable / check them out again)'
     def checkin_checkedout(path='.')
       view = ClearcaseHelper::View.new(path)
       puts view.checkin_checkedout!(options)
