@@ -19,7 +19,7 @@ module ClearcaseHelper
       # load excludes from .ccignore
       ccignore_file = File.join(@view_path,'.ccignore')
       ccignore = if File.exist?(ccignore_file)
-                   File.readlines(ccignore_file).map {|ignore| ignore.strip}
+                   File.readlines(ccignore_file).map {|ignore| ignore.strip}.reject{|line| line.match(/^#.*/) || line.empty?}
                  else
                    %w(\.hg|\.git|\.svn)
                  end
