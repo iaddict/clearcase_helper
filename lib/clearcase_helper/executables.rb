@@ -13,9 +13,12 @@ module ClearcaseHelper
         {}
       end
 
+      puts "# $ #{the_args.join(' ')}" if options[:verbose]
+
       success, stdout  = options[:noop] ? '' : sh_exec(*the_args)
 
-      puts "# #{the_args.join(' ')} (#{$?}, #{success ? 'success' : 'failure'})=>" if options[:verbose]
+      puts "# => (#{$?}, #{success ? 'success' : 'failure'})=>" if options[:verbose]
+
       if options[:verbose] && !options[:nostdout] && !stdout.empty?
         puts stdout.split("\n").collect {|l| "#  #{l}"}.join("\n")
       end
