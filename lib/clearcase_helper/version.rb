@@ -1,3 +1,3 @@
 module ClearcaseHelper
-  VERSION = "0.4.10"
+  VERSION = "5.0.0"
 end

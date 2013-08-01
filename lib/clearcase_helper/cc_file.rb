@@ -54,7 +54,7 @@ module ClearcaseHelper
     #
     # @return [CCFile]
     def refresh_status(options={})
-      success, stdout = cleartool("ls #{directory? ? '-directory' : ''} #{self.to_s.shellescape}", options)
+      success, stdout = cleartool('ls', directory? ? '-directory' : nil, self.to_s, options)
       @file = stdout.strip
 
       self
@@ -68,7 +68,7 @@ module ClearcaseHelper
       end
 
       parent.checkout!(options) unless parent.is_checkedout?
-      success, stdout = cleartool("mkelem -c \"\" -ptime #{file.to_s.shellescape}", options)
+      success, stdout = cleartool('mkelem', '-c', '', '-ptime', file.to_s, options)
 
       refresh_status(options)
 
@@ -79,7 +79,7 @@ module ClearcaseHelper
       parent = view.file_for(parent_dirname, options)
 
       parent.checkout!(options) unless parent.is_checkedout?
-      success, stdout = cleartool("rmname -c \"\" #{self.to_s.shellescape}", options)
+      success, stdout = cleartool('rmname', '-c', '', self.to_s, options)
 
       
       if success
@@ -97,7 +97,7 @@ module ClearcaseHelper
     # @param Hash[Symbol => String] - :comment => 'some comment'
     def checkin!(options={})
       comment = options[:comment] || ''
-      success, stdout = cleartool("ci -c \"#{comment.shellescape}\" -identical -ptime #{self.to_s.shellescape}", options)
+      success, stdout = cleartool('ci', '-c', comment, '-identical', '-ptime', self.to_s, options)
 
       refresh_status(options)
 
@@ -105,7 +105,7 @@ module ClearcaseHelper
     end
 
     def checkout!(options={})
-      success, stdout = cleartool("co -c \"\" -ptime -nwarn #{is_hijacked? ? '-usehijack' : ''} #{self.to_s.shellescape}", options)
+      success, stdout = cleartool('co', '-c', '', '-ptime', '-nwarn', is_hijacked? ? '-usehijack' : nil, self.to_s, options)
 
       refresh_status(options)
 

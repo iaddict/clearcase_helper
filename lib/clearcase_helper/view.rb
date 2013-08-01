@@ -14,7 +14,7 @@ module ClearcaseHelper
         return @files
       end
 
-      success, stdout = cleartool("ls -recurse #{@view_path.shellescape}", options)
+      success, stdout = cleartool("ls", "-recurse", @view_path, options)
 
       # load excludes from .ccignore
       ccignore_file = File.join(@view_path,'.ccignore')
@@ -125,14 +125,14 @@ module ClearcaseHelper
     # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
     def make_label_type(label, options={})
       comment = (options[:comment] || '') + ": #{@view_path}"
-      cleartool("mklbtype -c \"#{comment.shellescape}\" #{label.shellescape}", options)
+      cleartool('mklbtype', '-c', comment, label, options)
     end
 
     # @param String label - the label name to apply recursively to all files in actual view path
     # @param Hash[Symbol => String] - :debug => boolean, :noop => :boolean
     def make_label(label, options={})
       comment = options[:comment] || ''
-      cleartool("mklabel -c \"#{comment.shellescape}\" -recurse #{label.shellescape} #{@view_path.shellescape}", options)
+      cleartool('mklabel', '-c', comment, '-recurse', label, @view_path, options)
     end
   end
 end
